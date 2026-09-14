@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>21天7国欧洲/地中海旅行手册</title>
+  <style>
+    :root {
+      --bg-color: #f5f7fa;
+      --card-bg: #ffffff;
+      --text-main: #2c3e50;
+      --text-sub: #7f8c8d;
+      --primary: #2980b9;
+      --accent: #e74c3c;
+      --warning: #f39c12;
+      --border-color: #e2e8f0;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-color: #1a1a2e;
+        --card-bg: #16213e;
+        --text-main: #e9ecef;
+        --text-sub: #a0aec0;
+        --primary: #4ea8de;
+        --accent: #ff6b6b;
+        --warning: #f1c40f;
+        --border-color: #2d3748;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); padding: 12px; line-height: 1.5; padding-bottom: 40px; }
+    .container { max-width: 600px; margin: 0 auto; }
+    
+    .card { background: var(--card-bg); border-radius: 14px; padding: 16px; margin-bottom: 16px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+    .card-title { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+    
+    .hero-card { background: linear-gradient(135deg, var(--primary), #1a365d); color: #fff; text-align: center; padding: 20px 16px; }
+    .hero-card .next-event { font-size: 0.95rem; opacity: 0.9; margin-bottom: 8px; }
+    .hero-card .countdown { font-size: 1.8rem; font-weight: 800; letter-spacing: 1px; font-mono: monospace; }
+    
+    .map-container { width: 100%; text-align: center; }
+    .map-svg { width: 100%; height: auto; max-height: 220px; }
+    
+    .item-row { padding: 10px 0; border-bottom: 1px dashed var(--border-color); }
+    .item-row:last-child { border-bottom: none; }
+    .item-header { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.95rem; }
+    .item-sub { font-size: 0.85rem; color: var(--text-sub); margin-top: 4px; }
+    .nav-btn { display: inline-block; margin-top: 6px; padding: 4px 10px; background: var(--primary); color: #fff; text-decoration: none; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+    
+    .day-block { margin-bottom: 14px; }
+    .day-header { font-weight: 700; font-size: 1rem; color: var(--primary); padding-bottom: 4px; border-bottom: 2px solid var(--primary); margin-bottom: 8px; }
+    .timeline-item { display: flex; margin-bottom: 8px; }
+    .time-col { width: 65px; font-size: 0.85rem; font-weight: 600; color: var(--text-sub); flex-shrink: 0; }
+    .content-col { flex-grow: 1; font-size: 0.9rem; }
+    .tag-booking { background: rgba(231, 76, 60, 0.15); color: var(--accent); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-bottom: 2px; }
+    .tag-car { background: rgba(41, 128, 185, 0.15); color: var(--primary); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; display: inline-block; margin-bottom: 2px; }
+    
+    .todo-list { list-style: none; }
+    .todo-item { padding: 8px 0; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; display: flex; align-items: center; }
+    .todo-item::before { content: "•"; color: var(--primary); font-weight: bold; font-size: 1.2rem; margin-right: 8px; }
+
+    .tip-box { background: rgba(243, 156, 18, 0.1); border-left: 4px solid var(--warning); padding: 10px; border-radius: 4px; font-size: 0.85rem; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- 1. 顶部倒计时卡片 -->
+  <div class="card hero-card">
+    <div class="next-event" id="next-event-title">定位行程中...</div>
+    <div class="countdown" id="countdown-timer">00天 00:00:00</div>
+  </div>
+
+  <!-- 2. 行程总览地图 -->
+  <div class="card">
+    <div class="card-title"><span>🗺️ 行程路线总览</span><span style="font-size: 0.8rem; font-weight: normal; color: var(--text-sub);">21天 / 7国</span></div>
+    <div class="map-container">
+      <svg class="map-svg" viewBox="0 0 500 240" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 50 180 Q 120 100 160 120 T 240 70 T 340 160 T 430 170" fill="none" stroke="var(--primary)" stroke-width="3" stroke-dasharray="6,6"/>
+        <g transform="translate(50, 180)"><circle r="7" fill="#27ae60"/><text y="-12" font-size="10" text-anchor="middle" fill="var(--text-main)">PVG 上海</text></g>
+        <g transform="translate(160, 120)"><circle r="6" fill="#e74c3c"/><text y="-10" font-size="10" text-anchor="middle" fill="var(--text-main)">MUC 德国/多洛米蒂</text></g>
+        <g transform="translate(240, 70)"><circle r="6" fill="#3498db"/><text y="-10" font-size="10" text-anchor="middle" fill="var(--text-main)">BRU/AMS 西欧三国</text></g>
+        <g transform="translate(340, 160)"><circle r="6" fill="#f1c40f"/><text y="20" font-size="10" text-anchor="middle" fill="var(--text-main)">JTR/ATH 希腊</text></g>
+        <g transform="translate(430, 170)"><circle r="6" fill="#9b59b6"/><text y="20" font-size="10" text-anchor="middle" fill="var(--text-main)">LCA 塞浦路斯</text></g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- 3. 租车凭证 (新增模块) -->
+  <div class="card">
+    <div class="card-title">🚗 自驾租车凭证 (共4段)</div>
+    <div class="item-row">
+      <div class="item-header"><span>1. 德意奥段 (Thrifty / Hertz)</span><span style="color:var(--primary);"> Fiat 500</span></div>
+      <div class="item-sub">提车: 09-22 07:00 慕尼黑机场 (MUC) | 还车: 09-26 05:00 慕尼黑机场<br>⚠️ 到店支付 €93.58 | 订单号: 1009285483</div>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>2. 西欧三国段 (SIXT)</span><span style="color:var(--primary);"> BMW X1</span></div>
+      <div class="item-sub">提车: 09-26 08:00 布鲁塞尔机场 (BRU) | 还车: 10-01 08:00 阿姆斯特丹机场 (AMS)<br>全额预付 €697.43 (含异地还车费) | 预约号: 9739067010</div>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>3. 希腊段 (ALAMO)</span><span style="color:var(--primary);"> Toyota RAV4</span></div>
+      <div class="item-sub">提车: 10-04 09:30 雅典机场 (ATH) | 还车: 10-08 09:00 雅典机场<br>⚠️ 到店支付 €154.24 | 订单号: 1128150459521656</div>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>4. 塞浦路斯段 (AERCAR)</span><span style="color:var(--primary);"> Toyota Aygo</span></div>
+      <div class="item-sub">提车: 10-08 13:30 拉纳卡机场 (LCA) | 还车: 10-10 13:30 拉纳卡机场<br>已全额预付 (现场冻结押金 €800) | 确认号: CY953647230</div>
+    </div>
+  </div>
+
+  <!-- 4. 预订航班凭证 -->
+  <div class="card">
+    <div class="card-title">✈️ 预订航班凭证</div>
+    <div class="item-row">
+      <div class="item-header"><span>09-21 15:55 上海(PVG) ➔ 慕尼黑(MUC)</span><span style="color:var(--primary);">GF125/GF087</span></div>
+      <div class="item-sub">海湾航空 | 巴林中转 4h55m | 09-22 06:35 抵达慕尼黑</div>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>09-26 06:35 慕尼黑(MUC) ➔ 布鲁塞尔(BRU)</span><span style="color:var(--primary);">SN2654</span></div>
+      <div class="item-sub">布鲁塞尔航空 | 07:55 抵达 | 座位 10A, 10B</div>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>10-02 05:40 阿姆斯特丹(AMS) ➔ 圣托里尼(JTR)</span><span style="color:var(--primary);">HV6891</span></div>
+      <div class="item-sub">泛航航空 | 10:05 抵达</div>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>10-04 08:20 圣托里尼(JTR) ➔ 雅典(ATH)</span><span style="color:var(--primary);">FR1233</span></div>
+      <div class="item-sub">瑞安航空 | 09:10 抵达</div>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>10-08 11:00 雅典(ATH) ➔ 拉纳卡(LCA)</span><span style="color:var(--primary);">CY311</span></div>
+      <div class="item-sub">塞浦路斯航空 | 12:45 抵达</div>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>10-10 16:45 拉纳卡(LCA) ➔ 上海(PVG)</span><span style="color:var(--primary);">GF945/GF124</span></div>
+      <div class="item-sub">海湾航空 | 巴林中转 23h35m | 10-12 09:55 抵达上海</div>
+    </div>
+  </div>
+
+  <!-- 5. 已确认的酒店凭证 -->
+  <div class="card">
+    <div class="card-title">🏨 酒店住宿凭证 (全12宿)</div>
+    <div class="item-row">
+      <div class="item-header"><span>09-22 (1晚) Panorama Hotel Flora</span></div>
+      <div class="item-sub">📍 Defregger Gasse 25, Villandro, Italy | 📞 +39 0472 843220</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Panorama+Hotel+Flora+Villandro" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>09-23 (1晚) Hotel Auronzo</span></div>
+      <div class="item-sub">📍 Via Roma 30, Auronzo di Cadore, Italy | 📞 +39 351 483 6845</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Hotel+Auronzo+di+Cadore" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>09-24 (1晚) COOEE alpin Hotel Kitzbüheler Alpen</span></div>
+      <div class="item-sub">📍 Speckbacherstraße 79, Sankt Johann, Austria | 📞 +43 51221951030</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=COOEE+alpin+Hotel+Kitzbuheler+Alpen" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>09-25 (1晚) AKZENT Hotel Aufkirchen</span></div>
+      <div class="item-sub">📍 Dorfstrasse 15A, Aufkirchen, Germany | 📞 +49 8122 8670</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=AKZENT+Hotel+Aufkirchen" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>09-26 (1晚) NH Luxembourg Airport</span></div>
+      <div class="item-sub">📍 Route de Trèves 1, Luxembourg Airport</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=NH+Luxembourg+Airport" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>09-27 (1晚) NH Brugge</span></div>
+      <div class="item-sub">📍 Boeveriestraat 2, Bruges, Belgium | ⚠️ 到店现场付城市税 €8.4</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=NH+Brugge" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>09-28 (1晚) Hotel Indigo Antwerp - City Centre</span></div>
+      <div class="item-sub">📍 Koningin Astridplein 43, Antwerp, Belgium | ⚠️ 到店现场付城市税 €7.16</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Hotel+Indigo+Antwerp+City+Centre" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>09-29 (1晚) Van der Valk Hotel Rotterdam - Blijdorp</span></div>
+      <div class="item-sub">📍 Energieweg 2, Rotterdam, Netherlands | 📞 +31-102988777 | ⚠️ 到店付城市税 €4.44</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Van+der+Valk+Hotel+Rotterdam+Blijdorp" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>09-30 (2晚) Amedia Amsterdam Airport, Trademark Collection</span></div>
+      <div class="item-sub">📍 Boeing Avenue 333, Schiphol-Rijk, Netherlands | 📞 +31-882029100 | ⚠️ 到店付城市税 $8.03</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Amedia+Amsterdam+Airport" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>10-02 (2晚) Allure Breeze Suites</span></div>
+      <div class="item-sub">📍 Oia, Santorini, Greece</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Allure+Breeze+Suites+Oia" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>10-04 (1晚) Hotel Doupiani House</span></div>
+      <div class="item-sub">📍 Kastraki, Kalambaka, Greece | 📞 +30 2432 075326</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Hotel+Doupiani+House+Kalambaka" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>10-05 (1晚) Amalia Hotel Delphi</span></div>
+      <div class="item-sub">📍 Apollonos 1, Delphi, Greece | 📞 +30 2265 082101</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Amalia+Hotel+Delphi" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>10-06 (2晚) Luwian Athens Boutique Hotel</span></div>
+      <div class="item-sub">📍 Pireos, Athina, Greece</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Luwian+Athens+Boutique+Hotel" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>10-08 (1晚) Artemis Cynthia Complex</span></div>
+      <div class="item-sub">📍 Agiou Fotiou 6, Paphos, Cyprus</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Artemis+Cynthia+Complex+Paphos" target="_blank">Google 地图导航</a>
+    </div>
+    <div class="item-row">
+      <div class="item-header"><span>10-09 (1晚) Altius Boutique Hotel</span></div>
+      <div class="item-sub">📍 Achaion 1, Ayios Andreas, Nicosia, Cyprus</div>
+      <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Altius+Boutique+Hotel+Nicosia" target="_blank">Google 地图导航</a>
+    </div>
+  </div>
+
+  <!-- 6. 逐日行程 -->
+  <div class="card">
+    <div class="card-title">📅 逐日行程安排</div>
+    
+    <div class="day-block">
+      <div class="day-header">Day 1 | 09-21 (周一) 启程出发</div>
+      <div class="timeline-item"><div class="time-col">15:55</div><div class="content-col">PVG 乘 GF125 飞往巴林中转</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 2 | 09-22 (周二) 入境德国 ➔ 多洛米蒂</div>
+      <div class="timeline-item"><div class="time-col">06:35</div><div class="content-col">抵达慕尼黑 MUC T1</div></div>
+      <div class="timeline-item"><div class="time-col">07:00</div><div class="content-col"><span class="tag-car">取车自驾</span> 慕尼黑机场 Thrifty 柜台提取 Fiat 500</div></div>
+      <div class="timeline-item"><div class="time-col">下午</div><div class="content-col">游览富内斯山谷（Santa Maddalena教堂）</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Panorama Hotel Flora (Villandro)</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 3 | 09-23 (周三) 多洛米蒂核心纵深</div>
+      <div class="timeline-item"><div class="time-col">全天</div><div class="content-col"><span class="tag-booking">需提前订票</span> 刀背山 (Seceda) 缆车 & 三峰山 (Tre Cime)</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Hotel Auronzo (Auronzo di Cadore)</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 4 | 09-24 (周四) 离开意大利 ➔ 奥地利蒂罗尔</div>
+      <div class="timeline-item"><div class="time-col">白天</div><div class="content-col">布莱埃斯湖 (Lago di Braies)，午后自驾跨国前往奥地利</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">COOEE alpin Hotel Kitzbüheler Alpen</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 5 | 09-25 (周五) 返回德国慕尼黑</div>
+      <div class="timeline-item"><div class="time-col">白天</div><div class="content-col">自驾返回慕尼黑，入住机场附近酒店</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">AKZENT Hotel Aufkirchen</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 6 | 09-26 (周六) 慕尼黑 ➔ 布鲁塞尔 ➔ 卢森堡</div>
+      <div class="timeline-item"><div class="time-col">05:00</div><div class="content-col"><span class="tag-car">还车</span> 慕尼黑机场归还 Thrifty 车辆</div></div>
+      <div class="timeline-item"><div class="time-col">06:35</div><div class="content-col">MUC 乘 SN2654 飞往布鲁塞尔 (07:55 抵)</div></div>
+      <div class="timeline-item"><div class="time-col">08:00</div><div class="content-col"><span class="tag-car">取车自驾</span> 布鲁塞尔机场 SIXT 柜台提 BMW X1</div></div>
+      <div class="timeline-item"><div class="time-col">白天</div><div class="content-col">游览布鲁塞尔大广场/尿尿小童，下午自驾前往卢森堡</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">NH Luxembourg Airport</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 7 | 09-27 (周日) 卢森堡 ➔ 布鲁日</div>
+      <div class="timeline-item"><div class="time-col">白天</div><div class="content-col">游览卢森堡大峡谷，自驾前往水城布鲁日</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">NH Brugge</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 8 | 09-28 (周一) 布鲁日 ➔ 安特卫普</div>
+      <div class="timeline-item"><div class="time-col">白天</div><div class="content-col">布鲁日运河漫步，前往钻石之都安特卫普</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Hotel Indigo Antwerp - City Centre</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 9 | 09-29 (周二) 安特卫普 ➔ 鹿特丹</div>
+      <div class="timeline-item"><div class="time-col">白天</div><div class="content-col">入境荷兰，游览鹿特丹立体方块屋、拱形市场</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Van der Valk Hotel Rotterdam - Blijdorp</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 10 | 09-30 (周三) 鹿特丹 ➔ 阿姆斯特丹</div>
+      <div class="timeline-item"><div class="time-col">白天</div><div class="content-col">前往阿姆斯特丹，风车村 / 水坝广场</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Amedia Amsterdam Airport</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 11 | 10-01 (周四) 阿姆斯特丹 & 还车</div>
+      <div class="timeline-item"><div class="time-col">08:00</div><div class="content-col"><span class="tag-car">还车</span> 阿姆斯特丹史基浦机场归还 SIXT 车辆</div></div>
+      <div class="timeline-item"><div class="time-col">全天</div><div class="content-col"><span class="tag-booking">提前预约</span> 梵高博物馆 / 运河游船</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Amedia Amsterdam Airport (连住第2晚)</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 12 | 10-02 (周五) 荷兰 ➔ 希腊圣托里尼</div>
+      <div class="timeline-item"><div class="time-col">05:40</div><div class="content-col">AMS 乘 HV6891 飞往圣托里尼 (10:05 抵)</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Allure Breeze Suites (Oia) - 2晚连住</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 13 | 10-03 (周六) 圣托里尼日光</div>
+      <div class="timeline-item"><div class="time-col">全天</div><div class="content-col">伊亚镇悬崖步道、蓝顶教堂、伊亚落日</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 14 | 10-04 (周日) 圣岛 ➔ 雅典 ➔ 天空之城</div>
+      <div class="timeline-item"><div class="time-col">08:20</div><div class="content-col">JTR 乘 FR1233 飞往雅典 (09:10 抵)</div></div>
+      <div class="timeline-item"><div class="time-col">09:30</div><div class="content-col"><span class="tag-car">取车自驾</span> 雅典机场 ALAMO 柜台提取 RAV4</div></div>
+      <div class="timeline-item"><div class="time-col">白天</div><div class="content-col">自驾前往迈泰奥拉 (天空之城，约4小时)</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Hotel Doupiani House (Kalambaka)</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 15 | 10-05 (周一) 天空之城 ➔ 德尔斐</div>
+      <div class="timeline-item"><div class="time-col">上午</div><div class="content-col">游览迈泰奥拉修道院群</div></div>
+      <div class="timeline-item"><div class="time-col">下午</div><div class="content-col">开车前往德尔斐</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Amalia Hotel Delphi</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 16 | 10-06 (周二) 德尔斐 ➔ 雅典</div>
+      <div class="timeline-item"><div class="time-col">白天</div><div class="content-col">参观德尔斐遗址，自驾返回雅典市区</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Luwian Athens Boutique Hotel - 2晚连住</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 17 | 10-07 (周三) 雅典卫城</div>
+      <div class="timeline-item"><div class="time-col">全天</div><div class="content-col"><span class="tag-booking">需提前预约</span> 雅典卫城、卫城博物馆</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 18 | 10-08 (周四) 希腊 ➔ 塞浦路斯</div>
+      <div class="timeline-item"><div class="time-col">09:00</div><div class="content-col"><span class="tag-car">还车</span> 雅典机场归还 ALAMO 车辆</div></div>
+      <div class="timeline-item"><div class="time-col">11:00</div><div class="content-col">ATH 乘 CY311 飞往拉纳卡 (12:45 抵)</div></div>
+      <div class="timeline-item"><div class="time-col">13:30</div><div class="content-col"><span class="tag-car">取车自驾</span> 拉纳卡机场 AERCAR 柜台提 Toyota Aygo</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Artemis Cynthia Complex (帕福斯)</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 19 | 10-09 (周五) 帕福斯 ➔ 尼科西亚</div>
+      <div class="timeline-item"><div class="time-col">白天</div><div class="content-col">帕福斯考古公园，自驾前往首都尼科西亚</div></div>
+      <div class="timeline-item"><div class="time-col">住宿</div><div class="content-col">Altius Boutique Hotel (尼科西亚)</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 20 | 10-10 (周六) 返程启程</div>
+      <div class="timeline-item"><div class="time-col">13:30</div><div class="content-col"><span class="tag-car">还车</span> 拉纳卡机场归还 AERCAR 车辆</div></div>
+      <div class="timeline-item"><div class="time-col">16:45</div><div class="content-col">LCA 乘 GF945 飞往巴林 (19:50 抵)</div></div>
+      <div class="timeline-item"><div class="time-col">中转</div><div class="content-col">巴林长中转 23h 35m（建议安排过境游/酒店）</div></div>
+    </div>
+
+    <div class="day-block">
+      <div class="day-header">Day 21 | 10-11 ~ 10-12 返抵上海</div>
+      <div class="timeline-item"><div class="time-col">19:25</div><div class="content-col">巴林 BAH 乘 GF124 飞往上海</div></div>
+      <div class="timeline-item"><div class="time-col">10-12</div><div class="content-col">09:55 顺利抵达上海浦东 PVG</div></div>
+    </div>
+  </div>
+
+  <!-- 7. 待办清单 -->
+  <div class="card">
+    <div class="card-title">📝 待办事项清单</div>
+    <ul class="todo-list">
+      <li class="todo-item">申根多次往返签证 (Schengen Multi-entry Visa) 办理</li>
+      <li class="todo-item">主驾驶人(YUAN PING) 实体信用卡准备 (现场需刷扣押金及到店运费)</li>
+      <li class="todo-item">国际驾照翻译件 / IDP 准备 (需随身携带中国驾照原件)</li>
+      <li class="todo-item">确认海湾航空巴林 23h35m 中转 STPC 免费酒店/过境签政策</li>
+      <li class="todo-item">预订阿姆斯特丹梵高博物馆门票</li>
+      <li class="todo-item">预订雅典卫城分时段门票</li>
+      <li class="todo-item">购买欧洲通用流量卡 / 开通漫游</li>
+    </ul>
+  </div>
+
+  <!-- 8. 实用贴士 -->
+  <div class="card">
+    <div class="card-title">💡 实用贴士</div>
+    <div class="tip-box">
+      <strong>自驾注意事项：</strong><br>
+      • 塞浦路斯为<strong>左侧通行（右舵车）</strong>，注意驾驶习惯切换！<br>
+      • 奥地利/意大利高速需购买 Vignette 贴纸或准备欧元零钱/信用卡付高速费。
+    </div>
+    <div class="tip-box" style="margin-top:8px;">
+      <strong>插头与时区：</strong><br>
+      • 德/比/卢/荷/意/奥：UTC+2 | 希腊/塞浦路斯：UTC+3<br>
+      • 插头使用欧标双圆孔插头（Type C / F）。
+    </div>
+  </div>
+</div>
+
+<script>
+  // 倒计时核心逻辑
+  const flights = [
+    { name: "上海 飞往 巴林 (GF125)", time: "2026-09-21T15:55:00+08:00" },
+    { name: "巴林 飞往 慕尼黑 (GF087)", time: "2026-09-22T01:35:00+03:00" },
+    { name: "慕尼黑 飞往 布鲁塞尔 (SN2654)", time: "2026-09-26T06:35:00+02:00" },
+    { name: "阿姆斯特丹 飞往 圣托里尼 (HV6891)", time: "2026-10-02T05:40:00+02:00" },
+    { name: "圣托里尼 飞往 雅典 (FR1233)", time: "2026-10-04T08:20:00+03:00" },
+    { name: "雅典 飞往 拉纳卡 (CY311)", time: "2026-10-08T11:00:00+03:00" },
+    { name: "拉纳卡 飞往 巴林 (GF945)", time: "2026-10-10T16:45:00+03:00" },
+    { name: "巴林 飞往 上海 (GF124)", time: "2026-10-11T19:25:00+03:00" }
+  ];
+
+  function updateTimer() {
+    const now = new Date();
+    let target = null;
+    let title = "";
+
+    for (let f of flights) {
+      const fTime = new Date(f.time);
+      if (fTime > now) {
+        target = fTime;
+        title = "下一个关键事件: " + f.name;
+        break;
+      }
+    }
+
+    if (!target) {
+      document.getElementById('next-event-title').innerText = "🎉 21天旅程已圆满结束！";
+      document.getElementById('countdown-timer').innerText = "00天 00:00:00";
+      return;
+    }
+
+    document.getElementById('next-event-title').innerText = title;
+
+    const diff = target - now;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / 1000 / 60) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    const pad = (n) => n < 10 ? '0' + n : n;
+    document.getElementById('countdown-timer').innerText = 
+      `${days}天 ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  }
+
+  setInterval(updateTimer, 1000);
+  updateTimer();
+</script>
+
+</body>
+</html>
