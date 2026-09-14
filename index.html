@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>荷比希 13 日畅游手册</title>
+    <style>
+        :root {
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #1d1d1f;
+            --text-sub: #86868b;
+            --accent-color: #0071e3;
+            --border-color: #e5e5ea;
+            --tag-bg: #f2f2f7;
+            --warning-color: #ff9500;
+            --danger-color: #ff3b30;
+            --shadow: 0 4px 20px rgba(0,0,0,0.06);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #000000;
+                --card-bg: #1c1c1e;
+                --text-main: #f5f5f7;
+                --text-sub: #8e8e93;
+                --accent-color: #2997ff;
+                --border-color: #38383a;
+                --tag-bg: #2c2c2e;
+                --shadow: 0 4px 20px rgba(0,0,0,0.3);
+            }
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); padding: 16px; max-width: 600px; margin: 0 auto; line-height: 1.5; pb: 40px; }
+
+        .card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+        .card-title { font-size: 14px; font-weight: 600; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+
+        /* 顶部倒计时 */
+        .hero-card { background: linear-gradient(135deg, var(--accent-color), #5ac8fa); color: #ffffff; border: none; }
+        .hero-card .card-title { color: rgba(255,255,255,0.8); }
+        .event-name { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+        .timer-box { display: flex; gap: 8px; }
+        .time-unit { background: rgba(255,255,255,0.2); backdrop-filter: blur(10px); border-radius: 8px; padding: 8px 12px; text-align: center; flex: 1; }
+        .time-value { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .time-label { font-size: 10px; opacity: 0.9; }
+
+        /* 地图 SVG */
+        .map-container { width: 100%; text-align: center; overflow: hidden; padding: 10px 0; }
+        svg { max-width: 100%; height: auto; }
+
+        /* 订单与预订 */
+        .item-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--border-color); }
+        .item-row:last-child { border-bottom: none; }
+        .item-info { font-size: 14px; }
+        .item-sub { font-size: 12px; color: var(--text-sub); }
+        .nav-btn { font-size: 12px; color: var(--accent-color); text-decoration: none; font-weight: 600; background: var(--tag-bg); padding: 4px 10px; border-radius: 12px; }
+
+        /* 逐日行程 */
+        .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .day-title { font-size: 18px; font-weight: 700; }
+        .timeline { position: relative; padding-left: 20px; border-left: 2px solid var(--border-color); }
+        .timeline-node { position: relative; margin-bottom: 16px; }
+        .timeline-node::before { content: ''; position: absolute; left: -25px; top: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--accent-color); }
+        .node-time { font-size: 12px; font-weight: 700; color: var(--accent-color); }
+        .node-text { font-size: 14px; }
+        .badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 600; margin-left: 6px; }
+        .badge-book { background: #ff950020; color: var(--warning-color); }
+        .badge-alert { background: #ff3b3020; color: var(--danger-color); }
+
+        /* 展开路线地图 */
+        details summary { cursor: pointer; color: var(--accent-color); font-size: 13px; font-weight: 600; list-style: none; display: flex; justify-content: space-between; align-items: center; }
+        details[open] summary { margin-bottom: 10px; }
+
+        /* 列表 */
+        .simple-list { list-style: none; }
+        .simple-list li { font-size: 14px; padding: 6px 0; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; }
+        .simple-list li::before { content: "•"; color: var(--accent-color); font-weight: bold; font-size: 18px; margin-right: 8px; }
+        .simple-list li:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部倒计时卡片 -->
+    <div class="card hero-card">
+        <div class="card-title">此刻关注 · NEXT EVENT</div>
+        <div class="event-name" id="next-event-name">正在计算下一个行程...</div>
+        <div class="timer-box">
+            <div class="time-unit"><div class="time-value" id="d">00</div><div class="time-label">天</div></div>
+            <div class="time-unit"><div class="time-value" id="h">00</div><div class="time-label">时</div></div>
+            <div class="time-unit"><div class="time-value" id="m">00</div><div class="time-label">分</div></div>
+            <div class="time-unit"><div class="time-value" id="s">00</div><div class="time-label">秒</div></div>
+        </div>
+    </div>
+
+    <!-- 行程总览地图 (SVG 手绘感) -->
+    <div class="card">
+        <div class="card-title">行程路线总览</div>
+        <div class="map-container">
+            <svg viewBox="0 0 500 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- 荷兰/比利时段 -->
+                <path d="M 50,150 L 100,120 L 120,80 L 170,60" fill="none" stroke="#0071e3" stroke-width="3" stroke-dasharray="4,4"/>
+                <!-- 希腊段 -->
+                <path d="M 320,150 L 380,160 L 420,70 L 350,90 L 320,150" fill="none" stroke="#ff9500" stroke-width="3" stroke-dasharray="4,4"/>
+                
+                <!-- 城市节点 -->
+                <circle cx="50" cy="150" r="5" fill="#0071e3"/><text x="35" y="170" font-size="10" fill="currentColor">布鲁塞尔</text>
+                <circle cx="100" cy="120" r="5" fill="#0071e3"/><text x="85" y="140" font-size="10" fill="currentColor">安特卫普</text>
+                <circle cx="120" cy="80" r="5" fill="#0071e3"/><text x="80" y="80" font-size="10" fill="currentColor">鹿特丹</text>
+                <circle cx="170" cy="60" r="5" fill="#0071e3"/><text x="175" y="65" font-size="10" fill="currentColor">阿姆斯特丹</text>
+                
+                <circle cx="380" cy="160" r="5" fill="#ff9500"/><text x="365" y="180" font-size="10" fill="currentColor">圣托里尼</text>
+                <circle cx="320" cy="150" r="5" fill="#ff9500"/><text x="290" y="165" font-size="10" fill="currentColor">雅典</text>
+                <circle cx="420" cy="70" r="5" fill="#34c759"/><text x="410" y="60" font-size="10" fill="currentColor">迈泰奥拉</text>
+                <circle cx="350" cy="90" r="5" fill="#34c759"/><text x="340" y="80" font-size="10" fill="currentColor">德尔菲</text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- 已确认预订大交通与住宿 -->
+    <div class="card">
+        <div class="card-title">已确认机票与住宿</div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>MU5433 / HU0469 (上海-重庆-布鲁塞尔)</strong>
+                <div class="item-sub">09/25 20:50 - 09/26 08:20</div>
+            </div>
+            <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Brussels+Airport" target="_blank">导航</a>
+        </div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>Botanic Sanctuary Antwerp (3晚)</strong>
+                <div class="item-sub">09/26 - 09/29 | 安特卫普</div>
+            </div>
+            <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Botanic+Sanctuary+Antwerp" target="_blank">导航</a>
+        </div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>Rotterdam Marriott Hotel (1晚)</strong>
+                <div class="item-sub">09/29 - 09/30 | 鹿特丹</div>
+            </div>
+            <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Rotterdam+Marriott+Hotel" target="_blank">导航</a>
+        </div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>Mandarin Oriental, Amsterdam (2晚)</strong>
+                <div class="item-sub">09/30 - 10/02 | 阿姆斯特丹</div>
+            </div>
+            <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Mandarin+Oriental+Amsterdam" target="_blank">导航</a>
+        </div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>HV6891 (阿姆斯特丹 - 圣托里尼)</strong>
+                <div class="item-sub">10/02 05:40 - 10:05</div>
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>Mistique Hotel (2晚)</strong>
+                <div class="item-sub">10/02 - 10/04 | 圣托里尼 Oia</div>
+            </div>
+            <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Mistique+Luxury+Collection+Hotel+Santorini" target="_blank">导航</a>
+        </div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>FR1233 (圣托里尼 - 雅典)</strong>
+                <div class="item-sub">10/04 08:20 - 09:10</div>
+            </div>
+        </div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>Storyteller Boutique Hotel (1晚)</strong>
+                <div class="item-sub">10/04 - 10/05 | 卡兰巴卡</div>
+            </div>
+            <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Storyteller+Boutique+Hotel" target="_blank">导航</a>
+        </div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>Amalia Hotel Delphi (1晚)</strong>
+                <div class="item-sub">10/05 - 10/06 | 德尔菲</div>
+            </div>
+            <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Amalia+Hotel+Delphi" target="_blank">导航</a>
+        </div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>Electra Palace Athens (2晚)</strong>
+                <div class="item-sub">10/06 - 10/08 | 雅典</div>
+            </div>
+            <a class="nav-btn" href="https://www.google.com/maps/search/?api=1&query=Electra+Palace+Athens" target="_blank">导航</a>
+        </div>
+        <div class="item-row">
+            <div class="item-info">
+                <strong>A3620 / HU7922 (雅典-布鲁塞尔-上海)</strong>
+                <div class="item-sub">10/08 07:30 - 10/09 05:00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 逐日行程 -->
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 1 · 09/26 布鲁塞尔 $\rightarrow$ 安特卫普</div>
+        </div>
+        <details>
+            <summary>查看当日路线地图与一键导航 <span>▼</span></summary>
+            <a class="nav-btn" style="display:inline-block; margin-top:8px;" href="https://www.google.com/maps/dir/?api=1&destination=Botanic+Sanctuary+Antwerp&waypoints=Grand+Place+Brussels" target="_blank">🗺️ 打开 Google 全天多点导航</a>
+        </details>
+        <div class="timeline" style="margin-top: 12px;">
+            <div class="timeline-node"><div class="node-time">08:20</div><div class="node-text">降落布鲁塞尔 BRU 机场，出关</div></div>
+            <div class="timeline-node"><div class="node-time">10:00</div><div class="node-text">游览布鲁塞尔大广场、尿尿小童</div></div>
+            <div class="timeline-node"><div class="node-time">15:00</div><div class="node-text">乘火车前往安特卫普，入住 Botanic Sanctuary</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 2 · 09/27 根特与布鲁日一日游</div>
+        </div>
+        <details>
+            <summary>查看当日路线地图与一键导航 <span>▼</span></summary>
+            <a class="nav-btn" style="display:inline-block; margin-top:8px;" href="https://www.google.com/maps/dir/?api=1&destination=Brugge&waypoints=Ghent" target="_blank">🗺️ 打开 Google 全天多点导航</a>
+        </details>
+        <div class="timeline" style="margin-top: 12px;">
+            <div class="timeline-node"><div class="node-time">09:00</div><div class="node-text">游览根特（圣巴夫大教堂、伯爵城堡）</div></div>
+            <div class="timeline-node"><div class="node-time">14:00</div><div class="node-text">游览布鲁日（运河游船、爱之湖）</div></div>
+            <div class="timeline-node"><div class="node-time">19:00</div><div class="node-text">返回安特卫普住宿</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 3 · 09/28 安特卫普深度游</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">10:00</div><div class="node-text">安特卫普中央车站、圣母大教堂</div></div>
+            <div class="timeline-node"><div class="node-time">14:00</div><div class="node-text">时尚博物馆 / 鲁本斯故居周边</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 4 · 09/29 小孩堤防 $\rightarrow$ 鹿特丹</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">10:00</div><div class="node-text">前往小孩堤防 (Kinderdijk) 看风车群</div></div>
+            <div class="timeline-node"><div class="node-time">14:00</div><div class="node-text">前往鹿特丹，入住 Marriott</div></div>
+            <div class="timeline-node"><div class="node-time">15:30</div><div class="node-text">游览立体方块屋、Markthal 拱形市场</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 5 · 09/30 羊角村 $\rightarrow$ 阿姆斯特丹夜游</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">08:30</div><div class="node-text">从鹿特丹出发前往羊角村 (Giethoorn)</div></div>
+            <div class="timeline-node"><div class="node-time">11:00</div><div class="node-text">羊角村租船游览</div></div>
+            <div class="timeline-node"><div class="node-time">16:00</div><div class="node-text">前往阿姆斯特丹，入住文华东方</div></div>
+            <div class="timeline-node"><div class="node-time">20:00</div><div class="node-text">红灯区游览，观看 Casa Rosso 粉象秀 <span class="badge badge-book">提前订票</span></div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 6 · 10/01 阿姆斯特丹艺术日</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">09:30</div><div class="node-text">梵高博物馆 Van Gogh Museum <span class="badge badge-book">必须提前抢票</span></div></div>
+            <div class="timeline-node"><div class="node-time">14:00</div><div class="node-text">荷兰国家博物馆 Rijksmuseum <span class="badge badge-book">必须预约</span></div></div>
+            <div class="timeline-node"><div class="node-time">18:00</div><div class="node-text">阿姆斯特丹运河漫步</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 7 · 10/02 飞往圣托里尼</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">03:00</div><div class="node-text"><span class="badge badge-alert">红眼预警</span> 出发前往 AMS 机场</div></div>
+            <div class="timeline-node"><div class="node-time">05:40</div><div class="node-text">HV6891 起飞 $\rightarrow$ 10:05 抵达圣托里尼</div></div>
+            <div class="timeline-node"><div class="node-time">12:00</div><div class="node-text">入住 Mistique Hotel，Oia 镇漫步</div></div>
+            <div class="timeline-node"><div class="node-time">17:30</div><div class="node-text">伊亚 (Oia) 看世界级日落</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 8 · 10/03 圣托里尼环岛</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">10:00</div><div class="node-text">费拉 (Fira) 镇、蓝顶教堂拍照</div></div>
+            <div class="timeline-node"><div class="node-time">14:00</div><div class="node-text">黑沙滩 / 红沙滩 / 悬崖酒庄</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 9 · 10/04 飞雅典 $\rightarrow$ 迈泰奥拉</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">08:20</div><div class="node-text">FR1233 飞往雅典 (09:10 抵达)</div></div>
+            <div class="timeline-node"><div class="node-time">10:00</div><div class="node-text">雅典机场取车，开往迈泰奥拉 (约 4 小时)</div></div>
+            <div class="timeline-node"><div class="node-time">16:00</div><div class="node-text">入住 Storyteller Boutique Hotel，看修道院日落</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 10 · 10/05 迈泰奥拉 $\rightarrow$ 德尔菲</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">09:00</div><div class="node-text">游览迈泰奥拉天空之城修道院</div></div>
+            <div class="timeline-node"><div class="node-time">14:00</div><div class="node-text">开车前往德尔菲 (约 3.5 小时)</div></div>
+            <div class="timeline-node"><div class="node-time">18:00</div><div class="node-text">入住 Amalia Hotel Delphi</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 11 · 10/06 德尔菲 $\rightarrow$ 雅典</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">09:00</div><div class="node-text">游览德尔菲遗址与博物馆</div></div>
+            <div class="timeline-node"><div class="node-time">13:00</div><div class="node-text">开车返回雅典 (约 2.5 小时)，还车</div></div>
+            <div class="timeline-node"><div class="node-time">17:00</div><div class="node-text">入住 Electra Palace Athens</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 12 · 10/07 雅典一日游</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">08:30</div><div class="node-text">雅典卫城 Parthenon <span class="badge badge-book">提前分时段预约</span></div></div>
+            <div class="timeline-node"><div class="node-time">11:30</div><div class="node-text">卫城博物馆</div></div>
+            <div class="timeline-node"><div class="node-time">15:00</div><div class="node-text">普拉卡老城区漫步、宪法广场看换岗</div></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="day-header">
+            <div class="day-title">Day 13 · 10/08 启程回国</div>
+        </div>
+        <div class="timeline">
+            <div class="timeline-node"><div class="node-time">07:30</div><div class="node-text">A3620 雅典 $\rightarrow$ 09:30 布鲁塞尔 BRU</div></div>
+            <div class="timeline-node"><div class="node-time">09:30</div><div class="node-text"><span class="badge badge-alert">2.5h 极限转机</span> 清关提行李办海航值机</div></div>
+            <div class="timeline-node"><div class="node-time">12:00</div><div class="node-text">HU7922 布鲁塞尔 $\rightarrow$ 上海浦东 (次日 05:00 抵沪)</div></div>
+        </div>
+    </div>
+
+    <!-- 待办清单 -->
+    <div class="card">
+        <div class="card-title">待办清单 · TO-DO LIST</div>
+        <ul class="simple-list">
+            <li>预订 10/01 梵高博物馆门票 (提前 30 天开放)</li>
+            <li>预订 10/01 荷兰国家博物馆门票</li>
+            <li>预订 09/30 阿姆斯特丹 Casa Rosso 秀门票</li>
+            <li>预订 10/07 雅典卫城门票 (选择早 08:00 场次)</li>
+            <li>办理国际驾照翻译件 (IDP / 驾照翻译件)</li>
+            <li>准备申根签证及个人常用药品</li>
+        </ul>
+    </div>
+
+    <!-- 实用贴士 -->
+    <div class="card">
+        <div class="card-title">实用贴士 · TIPS</div>
+        <ul class="simple-list">
+            <li><strong>自驾准备</strong>：希腊自驾路段多山路，注意车距；租车需准备主驾驶员名下外币信用卡。</li>
+            <li><strong>防盗提示</strong>：布鲁塞尔大广场、阿姆斯特丹红灯区及雅典地铁为小偷高发区，随身物品前置。</li>
+            <li><strong>时区转换</strong>：荷兰/比利时为 UTC+2，希腊为 UTC+3 (比荷快1小时)，国内为 UTC+8。</li>
+        </ul>
+    </div>
+
+    <script>
+        // 关键行程节点（带准确时区 ISO 8601）
+        const events = [
+            { name: "上海飞重庆 (MU5433)", time: "2026-09-25T20:50:00+08:00" },
+            { name: "重庆飞布鲁塞尔 (HU0469)", time: "2026-09-26T02:50:00+08:00" },
+            { name: "飞往圣托里尼 (HV6891)", time: "2026-10-02T05:40:00+02:00" },
+            { name: "飞往雅典 (FR1233)", time: "2026-10-04T08:20:00+03:00" },
+            { name: "雅典飞布鲁塞尔 (A3620)", time: "2026-10-08T07:30:00+03:00" },
+            { name: "布鲁塞尔飞上海 (HU7922)", time: "2026-10-08T12:00:00+02:00" }
+        ];
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            let nextEvent = null;
+
+            for (let ev of events) {
+                let evTime = new Date(ev.time).getTime();
+                if (evTime > now) {
+                    nextEvent = { name: ev.name, target: evTime };
+                    break;
+                }
+            }
+
+            if (!nextEvent) {
+                document.getElementById('next-event-name').innerText = "旅程已圆满结束！";
+                document.getElementById('d').innerText = "00";
+                document.getElementById('h').innerText = "00";
+                document.getElementById('m').innerText = "00";
+                document.getElementById('s').innerText = "00";
+                return;
+            }
+
+            document.getElementById('next-event-name').innerText = nextEvent.name;
+            const diff = nextEvent.target - now;
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            document.getElementById('d').innerText = String(days).padStart(2, '0');
+            document.getElementById('h').innerText = String(hours).padStart(2, '0');
+            document.getElementById('m').innerText = String(minutes).padStart(2, '0');
+            document.getElementById('s').innerText = String(seconds).padStart(2, '0');
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
